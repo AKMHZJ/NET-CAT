@@ -24,6 +24,12 @@ type Client struct {
 
 func Handlclient(client *Client, Clients map[*Client]bool, clientsMutex *sync.Mutex) {
 	defer client.conn.Close()
+	
+	client.conn.Write([]byte("Welcome to TCP-Chat!\n"))
+
+	data, _ := os.ReadFile("ascii.txt")
+	data = append(data, byte('\n'))
+	_, err := client.conn.Write(data)
 
 	client.conn.Write([]byte("ENTER YOUR NAME : "))
 	name := make([]byte, 64)
@@ -41,7 +47,7 @@ func Handlclient(client *Client, Clients map[*Client]bool, clientsMutex *sync.Mu
 	historyMutex.Unlock()
 
 	// announce the new client
-	Message := fmt.Sprintf("[%s] %s has joined our chat...\n", time.Now().Format("2006-01-02 15:04:05"), client.name)
+	Message := fmt.Sprintf("[%s] #%s# has joined our chat...\n", time.Now().Format("2006-01-02 15:04:05"), client.name)
 	Broadcastmessage(Message, Clients, client, clientsMutex)
 
 	for {
@@ -50,7 +56,7 @@ func Handlclient(client *Client, Clients map[*Client]bool, clientsMutex *sync.Mu
 		if err != nil {
 			if err == io.EOF {
 				delete(Clients, client)
-				message := fmt.Sprintf("[%s] %s has left our chat...\n", time.Now().Format("2006-01-02 15:04:05"), client.name)
+				message := fmt.Sprintf("[%s] #%s# has left our chat...\n", time.Now().Format("2006-01-02 15:04:05"), client.name)
 				Broadcastmessage(message, Clients, client, clientsMutex)
 				return
 			}
