@@ -1,0 +1,4 @@
+1 - make sure the pattern are added [%s]%s : chat
+2 - make sure the name is not repeated by other client
+3 - know how, when and where to use Mutex and is it oblige to use it
+4- check if the erows are handle perfectly
